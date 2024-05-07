@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from line_591_notifications.api import auth
+from line_591_notifications.api import auth, notify
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", auth),
+    path('notify/', notify),
 ]
