@@ -2,8 +2,12 @@ from django.http import HttpResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from . import models
-import uuid, json
+import uuid, json, requests, urllib, os
 from urllib.parse import parse_qs
+import line_591_notifications.CONST as CONST
+import line_591_notifications.utils as utils
+from dotenv import load_dotenv
+load_dotenv()
 
 @csrf_exempt
 def auth(request: HttpRequest):
@@ -21,12 +25,11 @@ def auth(request: HttpRequest):
         Exception: If an unexpected error occurs.
     """
     try:
-        data = parse_qs(request.body.decode())
         user_id = uuid.uuid4()
         # user_id = data.get("user_id") # TODO: implementation: get user_id from request body
-        code_lst = data["code"]
+        code = request.GET["code"]
 
-        if not user_id or not code_lst:
+        if not user_id or not code:
             return HttpResponse("Missing user_id or code in request body", status=400)
         
         if not models.User.objects.filter(id=user_id).exists():
@@ -35,16 +38,19 @@ def auth(request: HttpRequest):
             # TODO: implementation: user information update
             pass
         
-        for code in code_lst:
-            if not models.Notification.objects.filter(user=user, code=code).exists():
-                models.Notification(
-                    user=models.User.objects.get(id=user_id), code=code
-                ).save()
-            else:
-                pass
-                # TODO: implementation: user already subscribed
+        token = utils.get_token(
+            client_id=os.environ["client_id"],
+            client_secret=os.environ["client_secret"],
+            code=code, 
+            redirect_uri=CONST.BASE_URL + "/auth/"
+        )
 
-        return HttpResponse("Authentication successful", status=200)
+        # TODO: implementation: 服務上限
+        models.Notification(
+            user=models.User.objects.get(id=user_id), token=token
+        ).save()
+
+        return HttpResponse(f"Authentication successful!", status=200)
 
     except ValidationError as e:
         return HttpResponse(f"Validation error: {str(e)}", status=400)
