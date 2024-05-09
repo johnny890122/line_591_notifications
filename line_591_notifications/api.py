@@ -38,7 +38,7 @@ def auth(request: HttpRequest):
             # TODO: implementation: user information update
             pass
         
-        token = utils.get_token(
+        token = utils.get_line_token(
             client_id=os.environ["client_id"],
             client_secret=os.environ["client_secret"],
             code=code, 
@@ -57,3 +57,29 @@ def auth(request: HttpRequest):
     except Exception as e:
         return HttpResponse(f"An error occurred: {str(e)}", status=500)
 
+@csrf_exempt
+def notify(request: HttpRequest):
+    """
+    Sends notifications to users based on the available notifications in the database.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The HTTP response indicating the status of the notification sending process.
+            If successful, returns a response with status code 200 and a message "Notification sent!".
+            If an error occurs, returns a response with status code 500 and an error message.
+    """
+    try:
+        notifications = models.Notification.objects.all()
+        for notification in notifications:
+            if not notification.token:
+                continue
+            res = utils.notify(notification.token)
+            if res.status_code == 401:
+                notification.delete()
+            elif res.status_code == 200:
+                print(f"Notification sent to {notification.user.id}")
+        return HttpResponse(f"Notification sent!", status=200)
+    except Exception as e:
+        return HttpResponse(f"An error occurred: {str(e)}", status=500)
