@@ -1,5 +1,16 @@
 import urllib, json, requests
-from . import CONST
+from line_591_notifications import CONST
+from django.utils.crypto import get_random_string
+
+def generate_csrf_token() -> str:
+    """
+    Generate a CSRF token.
+
+    Returns:
+        str: The generated CSRF token.
+    """
+    csrf_token = get_random_string(length=32)
+    return csrf_token
 
 def get_line_token(
         code:str, client_id:str, 
@@ -54,7 +65,7 @@ def get_line_token(
 
     return None  # Return None in case of error
 
-def notify(token: str):
+def notify(token: str) -> requests.Response:
     headers = {'Authorization': 'Bearer ' + token}
     message = {'message': parser()}
 
