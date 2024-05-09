@@ -54,3 +54,15 @@ def get_token(
 
     return None  # Return None in case of error
 
+def notify(token: str):
+    headers = {'Authorization': 'Bearer ' + token}
+    message = {'message': parser()}
+
+    res = requests.post(
+        url=CONST.NOTIFY_URL, headers=headers,
+        data=message
+    )
+    return res
+
+def parser():
+    return "喵喵喵"
