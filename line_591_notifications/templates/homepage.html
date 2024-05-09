@@ -6,8 +6,9 @@
 <body>
     <button onclick="redirectToLine()">Redirect to LINE</button>
     <script>
+        let url = "{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{redirect_uri}}&scope={{scope}}&state={{state}}";
         function redirectToLine() {
-            window.location.href = "{{url}}";
+            window.location.href = url;
         }
     </script>
 </body>
