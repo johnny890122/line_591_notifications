@@ -1,7 +1,7 @@
 import urllib, json, requests
-from line_591_notifications import CONST
+from . import CONST
 
-def get_token(
+def get_line_token(
         code:str, client_id:str, 
         client_secret:str, redirect_uri:str
     ) -> str:
@@ -34,7 +34,7 @@ def get_token(
             'client_secret': client_secret
         }
         res = requests.post(
-            url=CONST.OAUTH_URL, params=data, headers=headers
+            url=CONST.TOKEN_URL, params=data, headers=headers
         )
         res.raise_for_status()  # Raise an HTTPError for bad responses
         data = res.json()  # Automatically parse JSON response

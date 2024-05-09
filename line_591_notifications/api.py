@@ -38,7 +38,7 @@ def auth(request: HttpRequest):
             # TODO: implementation: user information update
             pass
         
-        token = utils.get_token(
+        token = utils.get_line_token(
             client_id=os.environ["client_id"],
             client_secret=os.environ["client_secret"],
             code=code, 
