@@ -6,4 +6,3 @@ __pycache__/
 .env
 .vscode/
 .aws-sam/
-.DS_Store
