@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,7 +16,7 @@ SECRET_KEY = "django-insecure-ji#9*=$am2s!64qh2(qw6tg^_sv2v&bkdfax(d#l)2=zwi$si8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["house-591-b14e8aaf8aa6.herokuapp.com"]
+ALLOWED_HOSTS = ["house-591-b14e8aaf8aa6.herokuapp.com", "127.0.0.1"]
 
 # Application definition
 
@@ -62,10 +64,14 @@ WSGI_APPLICATION = "line_591_notifications.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+DATABASES = { 
+    'default': { 
+        'ENGINE': 'django.db.backends.mysql', 
+        'USER': os.getenv('database_username'), 
+        'PASSWORD': os.getenv('database_password'),
+        'NAME': os.getenv('database'),
+        'HOST': os.getenv('database_host'),
+        'PORT': 3306,
     }
 }
 
