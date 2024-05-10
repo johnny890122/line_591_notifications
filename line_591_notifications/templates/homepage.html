@@ -4,6 +4,11 @@
     <title>Redirect Button</title>
 </head>
 <body>
+    <form method="post">    
+        {% csrf_token %}    
+        {{ form.as_p }}   
+        <button type="submit">SUBMIT</button>  
+    </form>
     <button onclick="redirectToLine()">Redirect to LINE</button>
     <script>
         let url = "{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{redirect_uri}}&scope={{scope}}&state={{state}}";

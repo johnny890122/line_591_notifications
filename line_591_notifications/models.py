@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 import uuid
 
 class User(models.Model):
@@ -7,3 +8,12 @@ class User(models.Model):
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=100)
+
+class RentCondition(models.Model):
+    url = models.URLField() # TODO: remove this field later
+
+class RentConditionForm(forms.ModelForm):
+    url = forms.CharField()
+    class Meta:    
+        model = RentCondition    
+        fields = ('url', )
