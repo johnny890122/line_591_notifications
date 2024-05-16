@@ -11,9 +11,3 @@ class Notification(models.Model):
 
 class RentCondition(models.Model):
     url = models.URLField() # TODO: remove this field later
-
-class RentConditionForm(forms.ModelForm):
-    url = forms.CharField()
-    class Meta:    
-        model = RentCondition    
-        fields = ('url', )
