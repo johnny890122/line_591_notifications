@@ -13,16 +13,13 @@ load_dotenv()
 
 def homepage(request: HttpRequest):
     context = {
-        "auth_url": CONST.AUTHORIZE_URL,
-        "response_type": "code",
-        "client_id": os.environ.get("client_id"),
         "base_url": CONST.BASE_URL, 
+        "auth_url": CONST.AUTHORIZE_URL,
+        "client_id": os.environ.get("client_id"),
+        "response_type": "code",
         "scope": "notify",
         "state": utils.generate_csrf_token(),
         "form": forms.RentConditionForm(),
-        "login_url": CONST.LOGIN_URL,
-        "login_id": os.environ.get("login_id"),
-        "scope": "openid", 
     }
     # if request.method == 'POST':
     #     data = dict(request.POST)
@@ -33,12 +30,26 @@ def homepage(request: HttpRequest):
     return render(request, 'homepage.html', context)
 
 def login(request: HttpRequest):
+    context = {
+        "login_url": CONST.LOGIN_URL,
+        "login_id": os.environ.get("login_id"),
+        "scope": "openid", 
+        "redirect_url": CONST.BASE_URL + "/isLogin/",
+        "response_type": "code",
+        "state": utils.generate_csrf_token(),
+    }
+
+    return render(request, 'login.html', context)
+
+def isLogin(request: HttpRequest):
     res = api.login(request).content
     data = json.loads(res.decode("utf-8"))
 
     context = {
-        "base_url": CONST.BASE_URL,
         "user_id": data["user_id"]
     }
 
-    return render(request, 'loginInfo.html', context)
+    return render(request, 'isLogin.html', context)
+
+def isLogout(request: HttpRequest):
+    return render(request, 'isLogout.html')
