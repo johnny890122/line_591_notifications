@@ -12,9 +12,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def homepage(request: HttpRequest):
-    context = {
-        "base_url": CONST.BASE_URL, 
+    context = { 
         "auth_url": CONST.AUTHORIZE_URL,
+        "auth_redirect_url": CONST.BASE_URL + "/isAuth/",
         "client_id": os.environ.get("client_id"),
         "response_type": "code",
         "scope": "notify",
@@ -53,3 +53,13 @@ def isLogin(request: HttpRequest):
 
 def isLogout(request: HttpRequest):
     return render(request, 'isLogout.html')
+
+def isAuth(request: HttpRequest):
+    res = api.auth(request).content
+    
+    data = json.loads(res.decode("utf-8"))
+    context = {
+        "base_url": CONST.BASE_URL, 
+        "notify_id": data["notify_id"],
+    }
+    return render(request, 'isAuth.html', context)

@@ -88,15 +88,14 @@ def auth(request: HttpRequest):
             client_secret=os.environ["client_secret"],
             code=code, 
             token_url=CONST.NOTIFY_TOKEN_URL,
-            redirect_uri=CONST.BASE_URL + "/auth/"
+            redirect_uri=CONST.BASE_URL + "/isAuth/"
         )
         # TODO: implementation: 服務上限
         models.Notification(
             user=models.User.objects.get(id=user_id), token=data["access_token"]
         ).save()
 
-        return HttpResponse(f"Authentication successful!", status=200)
-
+        return JsonResponse({"notify_id": data["access_token"]}, status=200)
     except ValidationError as e:
         return HttpResponse(f"Validation error: {str(e)}", status=400)
     except Exception as e:
