@@ -10,6 +10,49 @@ from dotenv import load_dotenv
 load_dotenv()
 
 @csrf_exempt
+def login(request: HttpRequest):
+    """
+    Handles the login process for the application.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The HTTP response indicating the result of the login process.
+    """
+
+    try:
+        # Check if the 'code' parameter is present in the GET request
+        code = request.GET.get("code")
+        if not code:
+            return HttpResponse("Missing 'code' in request", status=400)
+
+        # Obtain token
+        data = utils.get_token(
+            client_id=os.environ.get("login_id"), 
+            client_secret=os.environ.get("login_secret"),
+            code=code, 
+            token_url=CONST.LOGIN_TOKEN_URL,
+            redirect_uri=CONST.BASE_URL + "/login/"
+        )
+
+        id_token = data.get("id_token")
+        if not id_token:
+            return HttpResponse("Failed to retrieve ID token", status=500)
+        else:
+            pass
+            # TODO: store the id_token in the database
+        return HttpResponse("Authentication successful!", status=200)
+    
+    except ValidationError as e:
+        return HttpResponse(f"Validation error: {str(e)}", status=400)
+    except KeyError as e:
+        return HttpResponse(f"Missing key in response: {str(e)}", status=500)
+    except Exception as e:
+        return HttpResponse(f"An unexpected error occurred: {str(e)}", status=500)
+
+
+@csrf_exempt
 def auth(request: HttpRequest):
     """
     Authenticates the user and subscribes them to notifications.
@@ -38,17 +81,16 @@ def auth(request: HttpRequest):
             # TODO: implementation: user information update
             pass
         
-        token = utils.get_line_token(
+        data = utils.get_token(
             client_id=os.environ["client_id"],
             client_secret=os.environ["client_secret"],
             code=code, 
             token_url=CONST.NOTIFY_TOKEN_URL,
             redirect_uri=CONST.BASE_URL + "/auth/"
         )
-
         # TODO: implementation: 服務上限
         models.Notification(
-            user=models.User.objects.get(id=user_id), token=token
+            user=models.User.objects.get(id=user_id), token=data["access_token"]
         ).save()
 
         return HttpResponse(f"Authentication successful!", status=200)
@@ -85,24 +127,3 @@ def notify(request: HttpRequest):
     except Exception as e:
         return HttpResponse(f"An error occurred: {str(e)}", status=500)
 
-def login(request: HttpRequest):
-    try:
-        code = request.GET["code"]
-        if not code:
-            return HttpResponse("Missing user_id or code in request body", status=400)
-        
-        else:
-            # TODO: implementation: user information update
-            pass
-        # token = utils.get_line_token(
-        #     client_id=os.environ["login_id"],
-        #     client_secret=os.environ["login_secret"],
-        #     code=code, 
-        #     token_url=CONST.LOGIN_TOKEN_URL,
-        #     redirect_uri=CONST.BASE_URL + "/login/"
-        # )
-        return HttpResponse(f"Authentication successful! code: {code}", status=200)
-    except ValidationError as e:
-        return HttpResponse(f"Validation error: {str(e)}", status=400)
-    except Exception as e:
-        return HttpResponse(f"An error occurred: {str(e)}", status=500)
