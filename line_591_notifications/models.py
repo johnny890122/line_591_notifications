@@ -3,11 +3,14 @@ from django import forms
 import uuid
 
 class User(models.Model):
-    id = models.CharField(primary_key=True, max_length=100)
+    id = models.CharField(primary_key=True, max_length=400)
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=100)
-
-class RentCondition(models.Model):
-    url = models.URLField() # TODO: remove this field later
+    rent_url = models.CharField(max_length=1000)
+    
+# class RentCondition(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     notification = models.ForeignKey(Notification, on_delete=models.CASCADE)
+    # url = models.URLField() # TODO: remove this field later

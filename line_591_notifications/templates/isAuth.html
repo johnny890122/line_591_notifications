@@ -1,18 +1,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
 <body>
-    <button onclick=backToHome()>回到首頁</button>
+    <form id="form" method="post">    
+        {% csrf_token %}
+        <input id="id_user" name="user" value="" style="display: none;">   
+        <input id="id_token" name="token" value='{{notify_token}}' style="display: none;"> 
+        <input id="id_rent_url" name="rent_url" value=""> 
+    </form>
+    <button id="submitButton">Submit</button>
 </body>
 
 <script>
-    localStorage.setItem('notifyId', '{{notify_id}}');
-    function backToHome() {
-        window.location.href = "{{base_url}}/"
-    }
+    $(document).ready(function() {
+        $('#id_user').val(localStorage.getItem('userId'));
+
+        $('#submitButton').on('click', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            var formData = $('#form').serialize(); // Serialize the form data
+
+            $.post($('#form').attr('action'), formData, function(response) {
+                window.location.href = "{{base_url}}/isDone";
+            }).fail(function() {
+                alert('Form submission failed.');
+            });
+        });
+    });
 </script>
 </body>
 </html>
