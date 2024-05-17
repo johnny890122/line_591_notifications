@@ -6,6 +6,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.homepage),
     path("login/", views.login),
+    path('isLogin/', views.isLogin),
+    path('isLogout/', views.isLogout),
     path("auth/", api.auth),
     path('notify/', api.notify),
 ]

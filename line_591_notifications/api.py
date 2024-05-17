@@ -34,7 +34,7 @@ def login(request: HttpRequest):
             client_secret=os.environ.get("login_secret"),
             code=code, 
             token_url=CONST.LOGIN_TOKEN_URL,
-            redirect_uri=CONST.BASE_URL + "/login/"
+            redirect_uri=CONST.BASE_URL + "/isLogin/"
         )
         id_token = data.get("id_token")
 

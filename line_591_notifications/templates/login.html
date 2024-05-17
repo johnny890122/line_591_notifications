@@ -1,0 +1,16 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <button onclick=login()>Login</button>
+</body>
+
+<script>
+    function login() {
+        let url = "{{login_url}}?response_type={{response_type}}&client_id={{login_id}}&redirect_uri={{redirect_url}}&scope={{scope}}&state={{state}}";
+        window.location.href = url;
+    }
+</script>
+
+</html>

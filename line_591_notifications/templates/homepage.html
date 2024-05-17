@@ -4,7 +4,7 @@
     <title>Redirect Button</title>
 </head>
 <body>
-    <div id="button-container" ></div>
+    <button onclick="logout()">Log out</button>
 
     <form method="post">    
         {% csrf_token %}    
@@ -14,6 +14,10 @@
     <button onclick="redirect(route='auth')">Redirect to LINE</button>
 
     <script>
+        function logout() {
+            localStorage.removeItem('userId');
+            window.location.href = "{{base_url}}/isLogout";
+        }
         function redirect(route) {
             if (route == 'auth') {
                 let url = `{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{base_url}}/auth/&scope=notify&state={{state}}`;
@@ -22,27 +26,6 @@
                 let url = `{{login_url}}?response_type={{response_type}}&client_id={{login_id}}&redirect_uri={{base_url}}/login/&scope={{scope}}&state={{state}}`;
                 window.location.href = url;
             }
-        }
-    </script>
-    <script>
-        // Check if 'name' exists in local storage
-        if (!localStorage.getItem('userId')) {
-            // Create the login button
-            const button = document.createElement('button');
-            button.innerText = 'Login';
-            button.onclick = () => redirect('login');
-            // Add the button to the button container
-            document.getElementById('button-container').appendChild(button);
-        }
-        else{
-            // Create the logout button
-            const button = document.createElement('button');
-            button.innerText = 'Logout';
-            button.onclick = () => {
-                localStorage.removeItem('userId');
-                button.innerText = 'LogIn';
-            }
-            document.getElementById('button-container').appendChild(button);
         }
     </script>
 </body>
