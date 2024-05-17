@@ -11,21 +11,16 @@
         {{ form.as_p }}   
         <button type="submit">SUBMIT</button>  
     </form>
-    <button onclick="redirect(route='auth')">Redirect to LINE</button>
+    <button onclick="auth()">Redirect to LINE</button>
 
     <script>
         function logout() {
             localStorage.removeItem('userId');
             window.location.href = "{{base_url}}/isLogout";
         }
-        function redirect(route) {
-            if (route == 'auth') {
-                let url = `{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{base_url}}/auth/&scope=notify&state={{state}}`;
-                window.location.href = url;
-            } else if (route == 'login') {
-                let url = `{{login_url}}?response_type={{response_type}}&client_id={{login_id}}&redirect_uri={{base_url}}/login/&scope={{scope}}&state={{state}}`;
-                window.location.href = url;
-            }
+        function auth() {
+            let url = `{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{auth_redirect_url}}&scope=notify&state={{state}}`;
+            window.location.href = url;
         }
     </script>
 </body>
