@@ -42,6 +42,7 @@ def auth(request: HttpRequest):
             client_id=os.environ["client_id"],
             client_secret=os.environ["client_secret"],
             code=code, 
+            token_url=CONST.NOTIFY_TOKEN_URL,
             redirect_uri=CONST.BASE_URL + "/auth/"
         )
 
@@ -81,5 +82,27 @@ def notify(request: HttpRequest):
             elif res.status_code == 200:
                 print(f"Notification sent to {notification.user.id}")
         return HttpResponse(f"Notification sent!", status=200)
+    except Exception as e:
+        return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
+def login(request: HttpRequest):
+    try:
+        code = request.GET["code"]
+        if not code:
+            return HttpResponse("Missing user_id or code in request body", status=400)
+        
+        else:
+            # TODO: implementation: user information update
+            pass
+        # token = utils.get_line_token(
+        #     client_id=os.environ["login_id"],
+        #     client_secret=os.environ["login_secret"],
+        #     code=code, 
+        #     token_url=CONST.LOGIN_TOKEN_URL,
+        #     redirect_uri=CONST.BASE_URL + "/login/"
+        # )
+        return HttpResponse(f"Authentication successful! code: {code}", status=200)
+    except ValidationError as e:
+        return HttpResponse(f"Validation error: {str(e)}", status=400)
     except Exception as e:
         return HttpResponse(f"An error occurred: {str(e)}", status=500)

@@ -1,6 +1,8 @@
 import urllib, json, requests
-from line_591_notifications import CONST
+from typing import Dict
 from django.utils.crypto import get_random_string
+from urllib.parse import urlparse, parse_qs
+from line_591_notifications import CONST
 
 def generate_csrf_token() -> str:
     """
@@ -13,8 +15,8 @@ def generate_csrf_token() -> str:
     return csrf_token
 
 def get_line_token(
-        code:str, client_id:str, 
-        client_secret:str, redirect_uri:str
+        code:str, client_id:str, client_secret:str, 
+        redirect_uri:str, token_url:str
     ) -> str:
     """
     Retrieves an access token using the provided authorization code.
@@ -24,6 +26,7 @@ def get_line_token(
         client_id (str): The client ID.
         client_secret (str): The client secret.
         redirect_uri (str): The redirect URI.
+        token_url (str): The authorization URL.
 
     Returns:
         str: The access token.
@@ -45,7 +48,7 @@ def get_line_token(
             'client_secret': client_secret
         }
         res = requests.post(
-            url=CONST.TOKEN_URL, params=data, headers=headers
+            url=token_url, params=data, headers=headers
         )
         res.raise_for_status()  # Raise an HTTPError for bad responses
         data = res.json()  # Automatically parse JSON response
@@ -64,6 +67,29 @@ def get_line_token(
         print(f"Unexpected Error: {e}")
 
     return None  # Return None in case of error
+
+def parse_rent_url(url: str) -> Dict[str, str]:
+    """
+    Parses the given URL and returns a dictionary of query parameters.
+
+    Args:
+        url (str): The URL to parse.
+
+    Returns:
+        dict: A dictionary containing the query parameters as key-value pairs.
+
+    Raises:
+        None
+    """
+    try:
+        parsed_url = urlparse(url)
+        if not parsed_url.query:
+            return {}
+        query_params = parse_qs(parsed_url.query)
+        return {k: v[0] for k, v in query_params.items()}
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return {}
 
 def notify(token: str) -> requests.Response:
     headers = {'Authorization': 'Bearer ' + token}

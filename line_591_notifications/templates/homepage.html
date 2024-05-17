@@ -9,10 +9,12 @@
         {{ form.as_p }}   
         <button type="submit">SUBMIT</button>  
     </form>
-    <button onclick="redirectToLine()">Redirect to LINE</button>
+    <button onclick="redirect(route='auth')">Redirect to LINE</button>
+    <button onclick="redirect(route='login')">Login</button>
+
     <script>
-        let url = "{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{redirect_uri}}&scope={{scope}}&state={{state}}";
-        function redirectToLine() {
+        function redirect(route) {
+            let url = `{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{redirect_uri}}/${route}/&scope={{scope}}&state={{state}}`;
             window.location.href = url;
         }
     </script>
