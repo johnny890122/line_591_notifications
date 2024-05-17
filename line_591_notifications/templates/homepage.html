@@ -4,23 +4,45 @@
     <title>Redirect Button</title>
 </head>
 <body>
+    <div id="button-container" ></div>
+
     <form method="post">    
         {% csrf_token %}    
         {{ form.as_p }}   
         <button type="submit">SUBMIT</button>  
     </form>
     <button onclick="redirect(route='auth')">Redirect to LINE</button>
-    <button onclick="redirect(route='login')">Login</button>
 
     <script>
         function redirect(route) {
             if (route == 'auth') {
-                let url = `{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{redirect_uri}}/auth/&scope=notify&state={{state}}`;
+                let url = `{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{base_url}}/auth/&scope=notify&state={{state}}`;
                 window.location.href = url;
             } else if (route == 'login') {
-                let url = `{{login_url}}?response_type={{response_type}}&client_id={{login_id}}&redirect_uri={{redirect_uri}}/login/&scope={{scope}}&state={{state}}`;
+                let url = `{{login_url}}?response_type={{response_type}}&client_id={{login_id}}&redirect_uri={{base_url}}/login/&scope={{scope}}&state={{state}}`;
                 window.location.href = url;
             }
+        }
+    </script>
+    <script>
+        // Check if 'name' exists in local storage
+        if (!localStorage.getItem('userId')) {
+            // Create the login button
+            const button = document.createElement('button');
+            button.innerText = 'Login';
+            button.onclick = () => redirect('login');
+            // Add the button to the button container
+            document.getElementById('button-container').appendChild(button);
+        }
+        else{
+            // Create the logout button
+            const button = document.createElement('button');
+            button.innerText = 'Logout';
+            button.onclick = () => {
+                localStorage.removeItem('userId');
+                button.innerText = 'LogIn';
+            }
+            document.getElementById('button-container').appendChild(button);
         }
     </script>
 </body>

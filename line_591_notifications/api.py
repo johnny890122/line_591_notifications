@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from . import models
@@ -6,6 +6,7 @@ import uuid, json, requests, urllib, os
 from urllib.parse import parse_qs
 import line_591_notifications.CONST as CONST
 import line_591_notifications.utils as utils
+import line_591_notifications.models as models
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -35,14 +36,15 @@ def login(request: HttpRequest):
             token_url=CONST.LOGIN_TOKEN_URL,
             redirect_uri=CONST.BASE_URL + "/login/"
         )
-
         id_token = data.get("id_token")
+
+        # Save user to database
         if not id_token:
             return HttpResponse("Failed to retrieve ID token", status=500)
         else:
-            pass
-            # TODO: store the id_token in the database
-        return HttpResponse("Authentication successful!", status=200)
+            if not models.User.objects.filter(id=id_token).exists():
+                user = models.User(id=id_token).save()
+        return JsonResponse({"user_id": id_token}, status=200)
     
     except ValidationError as e:
         return HttpResponse(f"Validation error: {str(e)}", status=400)
