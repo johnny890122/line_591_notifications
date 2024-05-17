@@ -19,13 +19,7 @@ def homepage(request: HttpRequest):
         "response_type": "code",
         "scope": "notify",
         "state": utils.generate_csrf_token(),
-        "form": forms.RentConditionForm(),
     }
-    # if request.method == 'POST':
-    #     data = dict(request.POST)
-    #     models.RentCondition(
-    #         url=data["url"]
-    #     ).save()
 
     return render(request, 'homepage.html', context)
 
@@ -55,11 +49,20 @@ def isLogout(request: HttpRequest):
     return render(request, 'isLogout.html')
 
 def isAuth(request: HttpRequest):
-    res = api.auth(request).content
-    
-    data = json.loads(res.decode("utf-8"))
     context = {
-        "base_url": CONST.BASE_URL, 
-        "notify_id": data["notify_id"],
+        "base_url": CONST.BASE_URL,
+        "form": forms.NotifyForm(),
+        "notify_token": request.GET["code"],
     }
+    if request.method == 'POST':
+        data = dict(request.POST)
+        data = {k:v[0] for k,v in data.items()} # FIXME: 
+        models.Notification(
+            user=models.User.objects.get(id=data["user"]), 
+            token=data["token"],
+            rent_url=data["rent_url"]
+        ).save()
     return render(request, 'isAuth.html', context)
+
+def isDone(request: HttpRequest):
+    return render(request, 'isDone.html')

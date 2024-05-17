@@ -9,6 +9,7 @@ urlpatterns = [
     path('isLogin/', views.isLogin),
     path('isLogout/', views.isLogout),
     path('isAuth/', views.isAuth),
+    path('isDone/', views.isDone),
     path("auth/", api.auth),
     path('notify/', api.notify),
 ]

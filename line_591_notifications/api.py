@@ -79,9 +79,6 @@ def auth(request: HttpRequest):
         
         if not models.User.objects.filter(id=user_id).exists():
             user = models.User(id=user_id).save()
-        else:
-            # TODO: implementation: user information update
-            pass
         
         data = utils.get_token(
             client_id=os.environ["client_id"],
@@ -90,11 +87,6 @@ def auth(request: HttpRequest):
             token_url=CONST.NOTIFY_TOKEN_URL,
             redirect_uri=CONST.BASE_URL + "/isAuth/"
         )
-        # TODO: implementation: 服務上限
-        models.Notification(
-            user=models.User.objects.get(id=user_id), token=data["access_token"]
-        ).save()
-
         return JsonResponse({"notify_id": data["access_token"]}, status=200)
     except ValidationError as e:
         return HttpResponse(f"Validation error: {str(e)}", status=400)
