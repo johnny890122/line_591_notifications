@@ -52,16 +52,11 @@ def isAuth(request: HttpRequest):
     context = {
         "base_url": CONST.BASE_URL,
         "form": forms.NotifyForm(),
-        "notify_token": request.GET["code"],
+        "notify_code": request.GET["code"],
     }
+
     if request.method == 'POST':
-        data = dict(request.POST)
-        data = {k:v[0] for k,v in data.items()} # FIXME: 
-        models.Notification(
-            user=models.User.objects.get(id=data["user"]), 
-            token=data["token"],
-            rent_url=data["rent_url"]
-        ).save()
+        res = api.auth(request)
     return render(request, 'isAuth.html', context)
 
 def isDone(request: HttpRequest):

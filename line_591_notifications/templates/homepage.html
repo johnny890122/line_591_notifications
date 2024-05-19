@@ -13,7 +13,7 @@
             window.location.href = "{{base_url}}/isLogout";
         }
         function auth() {
-            let url = `{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{auth_redirect_url}}&scope=notify&state={{state}}`;
+            let url = `{{auth_url}}?response_type={{response_type}}&client_id={{client_id}}&redirect_uri={{auth_redirect_url}}&scope={{scope}}&state={{state}}`;
             window.location.href = url;
         }
     </script>
