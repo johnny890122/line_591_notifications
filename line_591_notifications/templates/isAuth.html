@@ -9,7 +9,7 @@
     <form id="form" method="post">    
         {% csrf_token %}
         <input id="id_user" name="user" value="" style="display: none;">   
-        <input id="id_token" name="token" value='{{notify_token}}' style="display: none;"> 
+        <input id="id_code" name="code" value='{{notify_code}}' style="display: none;"> 
         <input id="id_rent_url" name="rent_url" value=""> 
     </form>
     <button id="submitButton">Submit</button>
