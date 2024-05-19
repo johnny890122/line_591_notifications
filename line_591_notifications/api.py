@@ -81,6 +81,8 @@ def auth(request: HttpRequest):
         
         if not models.User.objects.filter(id=user_id).exists():
             user = models.User(id=user_id).save()
+        else:
+            user = models.User.objects.filter(id=user_id).first()
 
         try:
             res = utils.get_token(
@@ -116,22 +118,18 @@ def notify(request: HttpRequest):
             If successful, returns a response with status code 200 and a message "Notification sent!".
             If an error occurs, returns a response with status code 500 and an error message.
     """
-    try:
+    try:   
         notifications = models.Notification.objects.all()
-        print(notifications)
         for notification in notifications:
             token = notification.token
             rent_url = notification.rent_url
-            print(token)
             if not token or not rent_url:
                 continue
             res = utils.notify(token, rent_url)
-            print(res.status_code)
-            # if res.status_code == 401:
-            #     notification.delete()
-            # elif res.status_code == 200:
-            #     print(f"Notification sent to {notification.user.id}")
+            if res.status_code == 401:
+                notification.delete()
+            elif res.status_code == 200:
+                print(f"Notification sent to {notification.user.id}")
         return HttpResponse(f"Notification sent!", status=200)
     except Exception as e:
         return HttpResponse(f"An error occurred: {str(e)}", status=500)
-

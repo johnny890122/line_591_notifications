@@ -64,16 +64,25 @@ WSGI_APPLICATION = "line_591_notifications.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = { 
-    'default': { 
-        'ENGINE': 'django.db.backends.mysql', 
-        'USER': os.getenv('database_username'), 
-        'PASSWORD': os.getenv('database_password'),
-        'NAME': os.getenv('database'),
-        'HOST': os.getenv('database_host'),
-        'PORT': 3306,
+# DATABASES = { 
+#     'default': { 
+#         'ENGINE': 'django.db.backends.mysql', 
+#         'USER': os.getenv('database_username'), 
+#         'PASSWORD': os.getenv('database_password'),
+#         'NAME': os.getenv('database'),
+#         'HOST': os.getenv('database_host'),
+#         'PORT': 3306,
+#     }
+# }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+
 
 
 # Password validation

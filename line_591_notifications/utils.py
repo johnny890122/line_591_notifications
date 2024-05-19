@@ -1,8 +1,9 @@
 import urllib, json, requests
-from typing import Dict
+from typing import Dict, List
 from django.utils.crypto import get_random_string
 from urllib.parse import urlparse, parse_qs
 from line_591_notifications import CONST
+import ast
 
 def generate_csrf_token() -> str:
     """
@@ -89,15 +90,20 @@ def parse_rent_url(url: str) -> Dict[str, str]:
         print(f"An error occurred: {e}")
         return {}
 
-def notify(token: str) -> requests.Response:
+def notify(token: str, rent_url: str) -> requests.Response:
     headers = {'Authorization': 'Bearer ' + token}
-    message = {'message': parser()}
+    res = parser(rent_url).content.decode('utf-8')
+    results = ast.literal_eval(res)
 
-    res = requests.post(
-        url=CONST.NOTIFY_URL, headers=headers,
-        data=message
-    )
+    for result in results:
+        res = requests.post(
+            url=CONST.NOTIFY_URL, headers=headers,
+            data={'message': result["url"]}
+        )
     return res
 
-def parser():
-    return "喵喵喵"
+def parser(rent_url: str) -> List:
+    res = requests.post(
+        url=CONST.SAM_URL, data={'url': rent_url}
+    )
+    return res
