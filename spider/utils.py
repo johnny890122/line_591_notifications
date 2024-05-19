@@ -63,11 +63,10 @@ class House591Spider():
         url = f'https://rent.591.com.tw/home/{house_id}'
         r = s.get(url, headers=self.headers)
         soup = BeautifulSoup(r.text, 'html.parser')
-        token_item = soup.select_one('meta[name="csrf-token"]')
-
+        # token_item = soup.select_one('meta[name="csrf-token"]')
         # 設定 headers
         headers = self.headers.copy()
-        headers['X-CSRF-TOKEN'] = token_item.get('content')
+        # headers['X-CSRF-TOKEN'] = token_item.get('content')
         headers['deviceid'] = s.cookies.get_dict()['T591_TOKEN']
         headers['device'] = 'pc'
 
