@@ -7,6 +7,7 @@ class User(models.Model):
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=100)
     token = models.CharField(max_length=100)
     rent_url = models.CharField(max_length=1000)
     

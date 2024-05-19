@@ -57,41 +57,51 @@ def login(request: HttpRequest):
 @csrf_exempt
 def auth(request: HttpRequest):
     """
-    Authenticates the user and subscribes them to notifications.
+    Authenticate the user and obtain an authorization code.
 
     Args:
         request (HttpRequest): The HTTP request object.
 
     Returns:
-        HttpResponse: The HTTP response indicating the result of the authentication.
-
-    Raises:
-        ValidationError: If there is a validation error.
-        Exception: If an unexpected error occurs.
+        HttpResponse: The HTTP response indicating the result of the authentication process.
     """
-    try:
-        user_id = uuid.uuid4()
-        # user_id = data.get("user_id") # TODO: implementation: get user_id from request body
-        code = request.GET["code"]
 
-        if not user_id or not code:
-            return HttpResponse("Missing user_id or code in request body", status=400)
+    if request.method == "POST":
+        try:
+            data = {k: v[0] for k, v in dict(request.POST).items()}
+        except (AttributeError, IndexError) as e:
+            return HttpResponse("Invalid data format", status=400)
+        
+        user_id = data.get("user")
+        code = data.get("code")
+        rent_url = data.get("rent_url")
+
+        if not user_id or not code or not rent_url:
+            return HttpResponse("Missing arguments in request body", status=400)
         
         if not models.User.objects.filter(id=user_id).exists():
             user = models.User(id=user_id).save()
-        
-        data = utils.get_token(
-            client_id=os.environ["client_id"],
-            client_secret=os.environ["client_secret"],
-            code=code, 
-            token_url=CONST.NOTIFY_TOKEN_URL,
-            redirect_uri=CONST.BASE_URL + "/isAuth/"
-        )
-        return JsonResponse({"notify_id": data["access_token"]}, status=200)
-    except ValidationError as e:
-        return HttpResponse(f"Validation error: {str(e)}", status=400)
-    except Exception as e:
-        return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
+        try:
+            res = utils.get_token(
+                client_id=os.environ["client_id"],
+                client_secret=os.environ["client_secret"],
+                code=code, 
+                token_url=CONST.NOTIFY_TOKEN_URL,
+                redirect_uri=CONST.BASE_URL + "/isAuth/"
+            )
+        except Exception as e:
+            return HttpResponse("Error getting token", status=500)
+
+        models.Notification(
+            user=user, 
+            code=code,
+            token=res.get("access_token", ""),
+            rent_url=rent_url
+        ).save()
+        return HttpResponse("Get authorization code!", status=200)
+
+    return HttpResponse("Only POST method is allowed", status=405)
 
 @csrf_exempt
 def notify(request: HttpRequest):
@@ -108,14 +118,19 @@ def notify(request: HttpRequest):
     """
     try:
         notifications = models.Notification.objects.all()
+        print(notifications)
         for notification in notifications:
-            if not notification.token:
+            token = notification.token
+            rent_url = notification.rent_url
+            print(token)
+            if not token or not rent_url:
                 continue
-            res = utils.notify(notification.token)
-            if res.status_code == 401:
-                notification.delete()
-            elif res.status_code == 200:
-                print(f"Notification sent to {notification.user.id}")
+            res = utils.notify(token, rent_url)
+            print(res.status_code)
+            # if res.status_code == 401:
+            #     notification.delete()
+            # elif res.status_code == 200:
+            #     print(f"Notification sent to {notification.user.id}")
         return HttpResponse(f"Notification sent!", status=200)
     except Exception as e:
         return HttpResponse(f"An error occurred: {str(e)}", status=500)
