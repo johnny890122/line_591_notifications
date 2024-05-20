@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from celery.schedules import crontab
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -125,3 +126,15 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# TODO: prepare for deployment
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_BEAT_SCHEDULE = {
+      'invoke-notify-every-hour': {
+        'task': 'line_591_notifications.tasks.send_notification',
+        'schedule': crontab(hour='*/1'),
+        'args': (),
+        'options': {},
+    },
+}

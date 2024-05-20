@@ -1,7 +1,6 @@
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
-from . import models
 import uuid, json, requests, urllib, os
 from urllib.parse import parse_qs
 import line_591_notifications.CONST as CONST
@@ -105,31 +104,3 @@ def auth(request: HttpRequest):
 
     return HttpResponse("Only POST method is allowed", status=405)
 
-@csrf_exempt
-def notify(request: HttpRequest):
-    """
-    Sends notifications to users based on the available notifications in the database.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-
-    Returns:
-        HttpResponse: The HTTP response indicating the status of the notification sending process.
-            If successful, returns a response with status code 200 and a message "Notification sent!".
-            If an error occurs, returns a response with status code 500 and an error message.
-    """
-    try:   
-        notifications = models.Notification.objects.all()
-        for notification in notifications:
-            token = notification.token
-            rent_url = notification.rent_url
-            if not token or not rent_url:
-                continue
-            res = utils.notify(token, rent_url)
-            if res.status_code == 401:
-                notification.delete()
-            elif res.status_code == 200:
-                print(f"Notification sent to {notification.user.id}")
-        return HttpResponse(f"Notification sent!", status=200)
-    except Exception as e:
-        return HttpResponse(f"An error occurred: {str(e)}", status=500)
