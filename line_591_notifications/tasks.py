@@ -10,8 +10,4 @@ def send_notification():
         rent_url = notification.rent_url
         if not token or not rent_url:
             continue
-        res = utils.notify(token, rent_url)
-        if res.status_code == 401:
-            notification.delete()
-        elif res.status_code == 200:
-            print(f"Notification sent to {notification.user.id}")
+        utils.notify(token, rent_url)

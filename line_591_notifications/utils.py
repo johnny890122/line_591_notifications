@@ -1,9 +1,9 @@
-import urllib, json, requests
+import urllib, json, requests, time, random, ast
 from typing import Dict, List
 from django.utils.crypto import get_random_string
-from urllib.parse import urlparse, parse_qs
 from line_591_notifications import CONST
-import ast
+import line_591_notifications.spider.crawler as crawler
+from urllib.parse import parse_qs, urlparse
 
 def generate_csrf_token() -> str:
     """
@@ -67,43 +67,49 @@ def get_token(
 
     return None  # Return None in case of error
 
-def parse_rent_url(url: str) -> Dict[str, str]:
-    """
-    Parses the given URL and returns a dictionary of query parameters.
+def get_url_arguments(url: str):
+    parsed_url = urlparse(url)
+    if not parsed_url.scheme or parsed_url.scheme not in ['http', 'https']:
+        raise ValueError("Invalid URL scheme. Only 'http' and 'https' are supported.")
+    
+    if not parsed_url.netloc:
+        raise ValueError("Invalid URL. Netloc (domain) is missing.")
+    
+    if not parsed_url.query:
+        raise ValueError("No query parameters found in the URL.")
+    
+    query_params = parse_qs(parsed_url.query)
 
-    Args:
-        url (str): The URL to parse.
+    #TODO: Return a dictionary containing the parsed query parameters
+    return {key: value[0] if len(value) == 1 else value for key, value in query_params.items()}
 
-    Returns:
-        dict: A dictionary containing the query parameters as key-value pairs.
+def extract_detail(detail: Dict):    
+    # TODO: customize the return value
+    return {
+        "url": detail["shareInfo"]["url"],
+    }
 
-    Raises:
-        None
-    """
-    try:
-        parsed_url = urlparse(url)
-        if not parsed_url.query:
-            return {}
-        query_params = parse_qs(parsed_url.query)
-        return {k: v[0] for k, v in query_params.items()}
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return {}
+def crawl_591(url: str):
+    house591_spider = crawler.House591Spider()
+    houses = house591_spider.search(
+        filter_params=get_url_arguments(url), 
+        sort_params=CONST.SORT_PARAMS,
+        max_houses=CONST.MAX_HOUSE
+    )
+    
+    res = []
+    for house in houses:
+        house_detail = house591_spider.house_detail(house["post_id"])
+        res.append(extract_detail(house_detail))
+
+    return res
 
 def notify(token: str, rent_url: str) -> requests.Response:
     headers = {'Authorization': 'Bearer ' + token}
-    res = parser(rent_url).content.decode('utf-8')
-    results = ast.literal_eval(res)
-
+    results = crawl_591(rent_url)
     for result in results:
         res = requests.post(
             url=CONST.NOTIFY_URL, headers=headers,
             data={'message': result["url"]}
         )
-    return res
-
-def parser(rent_url: str) -> List:
-    res = requests.post(
-        url=CONST.SAM_URL, data={'url': rent_url}
-    )
     return res

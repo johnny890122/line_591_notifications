@@ -48,7 +48,7 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   InferenceApi:
     Description: API Gateway endpoint URL for Prod stage for Spider function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/classify_digit/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/spider/"
   InferenceFunction:
     Description: Spider Lambda Function ARN
     Value: !GetAtt InferenceFunction.Arn
