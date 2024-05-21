@@ -1,9 +1,22 @@
-import urllib, json, requests, time, random, ast
+import urllib, json, requests, time, random, ast, hashlib
 from typing import Dict, List
 from django.utils.crypto import get_random_string
 from line_591_notifications import CONST
 import line_591_notifications.spider.crawler as crawler
 from urllib.parse import parse_qs, urlparse
+
+def hash(str: str) -> str:
+    """
+    Hashes the input string using SHA-256 algorithm.
+
+    Args:
+        str (str): The string to be hashed.
+
+    Returns:
+        str: The hashed string.
+
+    """
+    return hashlib.sha256(str.encode()).hexdigest()
 
 def generate_csrf_token() -> str:
     """
