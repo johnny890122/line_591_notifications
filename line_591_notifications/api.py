@@ -34,8 +34,9 @@ def login(request: HttpRequest):
             token_url=CONST.LOGIN_TOKEN_URL,
             redirect_uri=CONST.BASE_URL + "/isLogin/"
         )
+        print("login", data)
         id_token = data.get("id_token")
-
+        print("login", id_token)
         # Save user to database
         if not id_token:
             return HttpResponse("Failed to retrieve ID token", status=500)
