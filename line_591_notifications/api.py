@@ -92,46 +92,14 @@ def auth(request: HttpRequest):
             )
         except Exception as e:
             return HttpResponse("Error getting token", status=500)
-        # print("user", user)
-        # print("code", code)
-        # print("res", res.get("access_token", ""))
-        # print("rent_url", rent_url)
-        # models.Notification(
-        #     user=user, 
-        #     code=code,
-        #     token=res.get("access_token", ""),
-        #     rent_url=rent_url
-        # ).save()
+        models.Notification(
+            user=user, code=code, rent_url=rent_url, 
+            token=res.get("access_token", "")
+        ).save()
         return HttpResponse("Get authorization code!", status=200)
 
     return HttpResponse("Only POST method is allowed", status=405)
 
 @csrf_exempt
 def test(request: HttpRequest):
-    """
-    Test function for the application.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-
-    Returns:
-        HttpResponse: The HTTP response indicating the result of the test.
-    """
-    # if not models.User.objects.filter(id=utils.hash(user_id)).exists():
-    #     user = models.User(id=utils.hash(user_id)).save()
-    # user = models.User.objects.filter(id=utils.hash(user_id))
-    # print(user)
-    user = models.User(id="1692fe11b1a8fde05343845ec4aa6720a317f2bb4cd71292a51ce9e0b7b92f66").save()
-    code = "hc6zG8L498HXVYVjfRX2ud"
-    token = "5HSOIIq0xGmTzcwPKcdM6Xw4tJyPaRpAD5lBCSpV5UY"
-    rent_url = "11111"
-
-    notifications = models.Notification.objects.all()
-    print(notifications)
-
-    # models.Notification(
-    #     user=user, 
-    #     token=token,
-    #     rent_url=rent_url
-    # ).save()
     return HttpResponse("Test function", status=200)

@@ -11,4 +11,5 @@ urlpatterns = [
     path('isAuth/', views.isAuth),
     path('isDone/', views.isDone),
     path("auth/", api.auth),
+    path("test", api.test),
 ]
