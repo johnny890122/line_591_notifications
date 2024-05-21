@@ -7,10 +7,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-ji#9*=$am2s!64qh2(qw6tg^_sv2v&bkdfax(d#l)2=zwi$si8"
 
@@ -63,32 +59,26 @@ WSGI_APPLICATION = "line_591_notifications.wsgi.application"
 
 
 # Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-# DATABASES = { 
-#     'default': { 
-#         'ENGINE': 'django.db.backends.mysql', 
-#         'USER': os.getenv('database_username'), 
-#         'PASSWORD': os.getenv('database_password'),
-#         'NAME': os.getenv('database'),
-#         'HOST': os.getenv('database_host'),
-#         'PORT': 3306,
-#     }
-# }
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+DATABASES = { 
+    'default': { 
+        'ENGINE': 'django.db.backends.mysql', 
+        'USER': os.getenv('database_username'), 
+        'PASSWORD': os.getenv('database_password'),
+        'NAME': os.getenv('database'),
+        'HOST': os.getenv('database_host'),
+        'PORT': 3306,
     }
 }
 
-
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 
 # Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
