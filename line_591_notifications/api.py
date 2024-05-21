@@ -40,9 +40,8 @@ def login(request: HttpRequest):
         if not id_token:
             return HttpResponse("Failed to retrieve ID token", status=500)
         else:
-            pass
-            # if not models.User.objects.filter(id=id_token).exists():
-            #     user = models.User(id=id_token).save()
+            if not models.User.objects.filter(id=id_token).exists():
+                user = models.User(id=id_token).save()
         return JsonResponse({"user_id": id_token}, status=200)
     except ValidationError as e:
         return HttpResponse(f"Validation error: {str(e)}", status=400)
