@@ -92,12 +92,9 @@ def auth(request: HttpRequest):
             )
         except Exception as e:
             return HttpResponse("Error getting token", status=500)
-
         models.Notification(
-            user=user, 
-            code=code,
-            token=res.get("access_token", ""),
-            rent_url=rent_url
+            user=user, code=code, rent_url=rent_url, 
+            token=res.get("access_token", "")
         ).save()
         return HttpResponse("Get authorization code!", status=200)
 
@@ -105,22 +102,4 @@ def auth(request: HttpRequest):
 
 @csrf_exempt
 def test(request: HttpRequest):
-    """
-    Test function for the application.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-
-    Returns:
-        HttpResponse: The HTTP response indicating the result of the test.
-    """
-    user_id = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FjY2Vzcy5saW5lLm1lIiwic3ViIjoiVTc3NTNmMTRmZTdiYzNhZmM3ZTJjYTQ2ZDc0ODU1ZDNiIiwiYXVkIjoiMjAwNTEyNzI3NiIsImV4cCI6MTcxNjI4MzM1MywiaWF0IjoxNzE2Mjc5NzUzLCJhbXIiOlsibGluZXNzbyJdfQ.yunzQlocN0d_u4O6wpPVRBPdaN6Ap1HxQJYOsgnL73Q"
-    if not models.User.objects.filter(id=utils.hash(user_id)).exists():
-        user = models.User(id=utils.hash(user_id)).save()
-    user = models.User.objects.filter(id=utils.hash(user_id))
-    print(user)
-
-    users = models.User.objects.all()
-    for user in users:
-        user.delete()
     return HttpResponse("Test function", status=200)

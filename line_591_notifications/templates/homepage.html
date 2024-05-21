@@ -4,7 +4,13 @@
     <title>Redirect Button</title>
 </head>
 <body>
-    <p>Hi {{userId}}</p>
+    <!-- <script>
+        let user_id = localStorage.getItem('userId');
+        document.write("Hi ");
+        document.write(user_id);
+        document.write("<br>");
+    </script>
+    -->
     <button onclick="logout()">Log out</button>
     <button onclick="auth()">Redirect to LINE</button>
 

@@ -1,11 +1,11 @@
 from django.db import models
-from django import forms
 import uuid
 
 class User(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
 
 class Notification(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length=100)
     token = models.CharField(max_length=100)
