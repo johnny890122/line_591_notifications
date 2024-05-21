@@ -92,13 +92,16 @@ def auth(request: HttpRequest):
             )
         except Exception as e:
             return HttpResponse("Error getting token", status=500)
-
-        models.Notification(
-            user=user, 
-            code=code,
-            token=res.get("access_token", ""),
-            rent_url=rent_url
-        ).save()
+        # print("user", user)
+        # print("code", code)
+        # print("res", res.get("access_token", ""))
+        # print("rent_url", rent_url)
+        # models.Notification(
+        #     user=user, 
+        #     code=code,
+        #     token=res.get("access_token", ""),
+        #     rent_url=rent_url
+        # ).save()
         return HttpResponse("Get authorization code!", status=200)
 
     return HttpResponse("Only POST method is allowed", status=405)
@@ -114,13 +117,21 @@ def test(request: HttpRequest):
     Returns:
         HttpResponse: The HTTP response indicating the result of the test.
     """
-    user_id = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FjY2Vzcy5saW5lLm1lIiwic3ViIjoiVTc3NTNmMTRmZTdiYzNhZmM3ZTJjYTQ2ZDc0ODU1ZDNiIiwiYXVkIjoiMjAwNTEyNzI3NiIsImV4cCI6MTcxNjI4MzM1MywiaWF0IjoxNzE2Mjc5NzUzLCJhbXIiOlsibGluZXNzbyJdfQ.yunzQlocN0d_u4O6wpPVRBPdaN6Ap1HxQJYOsgnL73Q"
-    if not models.User.objects.filter(id=utils.hash(user_id)).exists():
-        user = models.User(id=utils.hash(user_id)).save()
-    user = models.User.objects.filter(id=utils.hash(user_id))
-    print(user)
+    # if not models.User.objects.filter(id=utils.hash(user_id)).exists():
+    #     user = models.User(id=utils.hash(user_id)).save()
+    # user = models.User.objects.filter(id=utils.hash(user_id))
+    # print(user)
+    user = models.User(id="1692fe11b1a8fde05343845ec4aa6720a317f2bb4cd71292a51ce9e0b7b92f66").save()
+    code = "hc6zG8L498HXVYVjfRX2ud"
+    token = "5HSOIIq0xGmTzcwPKcdM6Xw4tJyPaRpAD5lBCSpV5UY"
+    rent_url = "11111"
 
-    users = models.User.objects.all()
-    for user in users:
-        user.delete()
+    notifications = models.Notification.objects.all()
+    print(notifications)
+
+    # models.Notification(
+    #     user=user, 
+    #     token=token,
+    #     rent_url=rent_url
+    # ).save()
     return HttpResponse("Test function", status=200)
