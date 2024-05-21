@@ -47,9 +47,11 @@ def get_token(
             'client_id': client_id, 'client_secret': client_secret, 
             'redirect_uri': redirect_uri,
         }
+        print(data)
         res = requests.post(
             url=token_url, headers=headers, data=data
         )
+        print(res.json())
         res.raise_for_status()  # Raise an HTTPError for bad responses
         return res.json()
     except requests.RequestException as e:

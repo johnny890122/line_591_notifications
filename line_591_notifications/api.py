@@ -21,36 +21,36 @@ def login(request: HttpRequest):
         HttpResponse: The HTTP response indicating the result of the login process.
     """
 
-    try:
-        # Check if the 'code' parameter is present in the GET request
-        code = request.GET.get("code")
-        if not code:
-            return HttpResponse("Missing 'code' in request", status=400)
+    # try:
+    # Check if the 'code' parameter is present in the GET request
+    code = request.GET.get("code")
+    if not code:
+        return HttpResponse("Missing 'code' in request", status=400)
 
-        # Obtain token
-        data = utils.get_token(
-            client_id=os.environ.get("login_id"), 
-            client_secret=os.environ.get("login_secret"),
-            code=code, 
-            token_url=CONST.LOGIN_TOKEN_URL,
-            redirect_uri=CONST.BASE_URL + "/isLogin/"
-        )
-        id_token = data.get("id_token")
+    # Obtain token
+    data = utils.get_token(
+        client_id=os.environ.get("login_id"), 
+        client_secret=os.environ.get("login_secret"),
+        code=code, 
+        token_url=CONST.LOGIN_TOKEN_URL,
+        redirect_uri=CONST.BASE_URL + "/isLogin/"
+    )
+    # id_token = data.get("id_token")
 
-        # Save user to database
-        if not id_token:
-            return HttpResponse("Failed to retrieve ID token", status=500)
-        else:
-            if not models.User.objects.filter(id=id_token).exists():
-                user = models.User(id=id_token).save()
-        return JsonResponse({"user_id": id_token}, status=200)
+    # # Save user to database
+    # if not id_token:
+    #     return HttpResponse("Failed to retrieve ID token", status=500)
+    # else:
+    #     if not models.User.objects.filter(id=id_token).exists():
+    #         user = models.User(id=id_token).save()
+    # return JsonResponse({"user_id": id_token}, status=200)
     
-    except ValidationError as e:
-        return HttpResponse(f"Validation error: {str(e)}", status=400)
-    except KeyError as e:
-        return HttpResponse(f"Missing key in response: {str(e)}", status=500)
-    except Exception as e:
-        return HttpResponse(f"An unexpected error occurred: {str(e)}", status=500)
+    # except ValidationError as e:
+    #     return HttpResponse(f"Validation error: {str(e)}", status=400)
+    # except KeyError as e:
+    #     return HttpResponse(f"Missing key in response: {str(e)}", status=500)
+    # except Exception as e:
+    #     return HttpResponse(f"An unexpected error occurred: {str(e)}", status=500)
 
 
 @csrf_exempt
