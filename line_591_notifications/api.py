@@ -20,7 +20,6 @@ def login(request: HttpRequest):
     Returns:
         HttpResponse: The HTTP response indicating the result of the login process.
     """
-
     try:
         # Check if the 'code' parameter is present in the GET request
         code = request.GET.get("code")
@@ -41,10 +40,10 @@ def login(request: HttpRequest):
         if not id_token:
             return HttpResponse("Failed to retrieve ID token", status=500)
         else:
-            if not models.User.objects.filter(id=id_token).exists():
-                user = models.User(id=id_token).save()
-        return JsonResponse({"user_id": id_token}, status=200)
-    
+            hash_id = utils.hash(id_token)
+            if not models.User.objects.filter(id=hash_id).exists():
+                user = models.User(id=hash_id).save()
+        return JsonResponse({"user_id": hash_id}, status=200)
     except ValidationError as e:
         return HttpResponse(f"Validation error: {str(e)}", status=400)
     except KeyError as e:
@@ -104,3 +103,24 @@ def auth(request: HttpRequest):
 
     return HttpResponse("Only POST method is allowed", status=405)
 
+@csrf_exempt
+def test(request: HttpRequest):
+    """
+    Test function for the application.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The HTTP response indicating the result of the test.
+    """
+    user_id = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FjY2Vzcy5saW5lLm1lIiwic3ViIjoiVTc3NTNmMTRmZTdiYzNhZmM3ZTJjYTQ2ZDc0ODU1ZDNiIiwiYXVkIjoiMjAwNTEyNzI3NiIsImV4cCI6MTcxNjI4MzM1MywiaWF0IjoxNzE2Mjc5NzUzLCJhbXIiOlsibGluZXNzbyJdfQ.yunzQlocN0d_u4O6wpPVRBPdaN6Ap1HxQJYOsgnL73Q"
+    if not models.User.objects.filter(id=utils.hash(user_id)).exists():
+        user = models.User(id=utils.hash(user_id)).save()
+    user = models.User.objects.filter(id=utils.hash(user_id))
+    print(user)
+
+    users = models.User.objects.all()
+    for user in users:
+        user.delete()
+    return HttpResponse("Test function", status=200)

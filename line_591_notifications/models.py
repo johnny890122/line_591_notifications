@@ -3,7 +3,7 @@ from django import forms
 import uuid
 
 class User(models.Model):
-    id = models.CharField(primary_key=True, max_length=400)
+    id = models.CharField(primary_key=True, max_length=255)
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

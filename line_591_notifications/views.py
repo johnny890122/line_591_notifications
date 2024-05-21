@@ -38,7 +38,6 @@ def login(request: HttpRequest):
 def isLogin(request: HttpRequest):
     res = api.login(request).content
     data = json.loads(res.decode("utf-8"))
-
     context = {
         "user_id": data["user_id"]
     }
