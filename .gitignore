@@ -1,6 +1,5 @@
 *.pyc
 db.sqlite3
-line_591_notifications/migrations/
 line_591_notifications/__pycache__/
 __pycache__/
 .env
