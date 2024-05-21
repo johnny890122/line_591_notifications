@@ -36,11 +36,10 @@ def login(request: HttpRequest):
     return render(request, 'login.html', context)
 
 def isLogin(request: HttpRequest):
-    # res = api.login(request).content
-    # data = json.loads(res.decode("utf-8"))
-    res = api.login(request)
+    res = api.login(request).content
+    data = json.loads(res.decode("utf-8"))
     context = {
-        # "user_id": data["user_id"]
+        "user_id": data["user_id"]
     }
 
     return render(request, 'isLogin.html', context)
