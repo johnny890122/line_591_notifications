@@ -63,7 +63,6 @@ def get_token(
         res = requests.post(
             url=token_url, headers=headers, data=data
         )
-        res.raise_for_status()  # Raise an HTTPError for bad responses
         return res.json()
     except requests.RequestException as e:
         # Handle any request-related errors

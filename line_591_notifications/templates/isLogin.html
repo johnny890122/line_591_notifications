@@ -7,6 +7,16 @@
 </head>
 
 <script>
+  function checkUserId() {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+          window.location.href = '/login';
+      }
+  }
+  setInterval(checkUserId, 100);
+</script>
+
+<script>
     localStorage.setItem('userId', '{{user_id}}');
     function backToHome() {
         window.location.href = "{{base_url}}/"
