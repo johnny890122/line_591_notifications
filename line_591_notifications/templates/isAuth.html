@@ -7,6 +7,16 @@
 </head>
 
 <script>
+  function checkUserId() {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+          window.location.href = '/login';
+      }
+  }
+  setInterval(checkUserId, 100);
+</script>
+
+<script>
     $(document).ready(function() {
         $('#id_user').val(localStorage.getItem('userId'));
 
@@ -16,9 +26,16 @@
             var formData = $('#form').serialize(); // Serialize the form data
 
             $.post($('#form').attr('action'), formData, function(response) {
+              console.log(response == "Done");
+              if (response == "Done") {
                 window.location.href = "{{base_url}}/isDone";
+              } else if (response == "Expired"){
+                alert("授權碼已過期，請重新綁定 Line Notify。");
+                window.location.href = "{{base_url}}/isLogin";
+              }
             }).fail(function() {
-                alert('Form submission failed.');
+                alert('請重新登入。');
+                window.location.href = "{{base_url}}/login";
             });
         });
     });

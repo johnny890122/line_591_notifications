@@ -60,6 +60,11 @@ def isAuth(request: HttpRequest):
 
         if request.method == 'POST':
             res = api.auth(request)
+            if res.status_code == 200:
+                return HttpResponse("Done", status=200)
+            else:
+                return HttpResponse("Expired", status=400)
+                
     except Exception as e:
         return redirect("/")
     return render(request, 'isAuth.html', context)

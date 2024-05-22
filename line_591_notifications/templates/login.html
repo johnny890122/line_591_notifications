@@ -28,6 +28,13 @@
 </style>
 
 <script>
+  function checkUserId() {
+    localStorage.removeItem('userId');
+  }
+  setInterval(checkUserId, 100);
+</script>
+
+<script>
     function login() {
         let url = "{{login_url}}?response_type={{response_type}}&client_id={{login_id}}&redirect_uri={{redirect_url}}&scope={{scope}}&state={{state}}";
         window.location.href = url;

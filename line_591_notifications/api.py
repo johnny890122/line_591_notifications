@@ -82,6 +82,8 @@ def auth(request: HttpRequest):
         else:
             user = models.User.objects.filter(id=user_id).first()
 
+        if models.Notification.objects.filter(user=user, code=code).exists():
+            return HttpResponse("Code already used", status=302)
         try:
             res = utils.get_token(
                 client_id=os.environ["client_id"],
@@ -102,4 +104,10 @@ def auth(request: HttpRequest):
 
 @csrf_exempt
 def test(request: HttpRequest):
+    users = models.User.objects.all()
+    for user in users:
+        print(user)
+    notifications = models.Notification.objects.all()
+    for notification in notifications:
+        print(notification.rent_url)
     return HttpResponse("Test function", status=200)

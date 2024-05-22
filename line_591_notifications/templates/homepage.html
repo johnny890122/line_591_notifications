@@ -8,6 +8,16 @@
 </head>
 
 <script>
+    function checkUserId() {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            window.location.href = '/login';
+        }
+    }
+    setInterval(checkUserId, 100);
+</script>
+
+<script>
     function logout() {
         localStorage.removeItem('userId');
         window.location.href = "{{base_url}}/isLogout";
