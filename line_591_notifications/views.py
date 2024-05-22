@@ -36,26 +36,32 @@ def login(request: HttpRequest):
     return render(request, 'login.html', context)
 
 def isLogin(request: HttpRequest):
-    res = api.login(request).content
-    data = json.loads(res.decode("utf-8"))
-    context = {
-        "user_id": data["user_id"]
-    }
-
-    return render(request, 'isLogin.html', context)
+    try:
+        res = api.login(request).content
+        data = json.loads(res.decode("utf-8"))
+        if data["user_id"]:
+            context = {"user_id": data["user_id"]}
+            return render(request, 'isLogin.html', context)
+        else:
+            return redirect("/")
+    except Exception as e:
+        return redirect("/")
 
 def isLogout(request: HttpRequest):
     return render(request, 'isLogout.html')
 
 def isAuth(request: HttpRequest):
-    context = {
-        "base_url": CONST.BASE_URL,
-        "form": forms.NotifyForm(),
-        "notify_code": request.GET["code"],
-    }
+    try:
+        context = {
+            "base_url": CONST.BASE_URL,
+            "form": forms.NotifyForm(),
+            "notify_code": request.GET["code"],
+        }
 
-    if request.method == 'POST':
-        res = api.auth(request)
+        if request.method == 'POST':
+            res = api.auth(request)
+    except Exception as e:
+        return redirect("/")
     return render(request, 'isAuth.html', context)
 
 def isDone(request: HttpRequest):
